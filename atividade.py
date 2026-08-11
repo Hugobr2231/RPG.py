@@ -10,15 +10,23 @@ jogador = {
     'nome': input('Digite o seu nome jogador(a)!: ').lower(),
     'vida': 50,
     'ataque': 10,
-    'defesa': 10,
+    'defesa': 5,
     'energia': 3,
-    'inventário': ['poção de vida', 'poção de energia', 'poção de defesa', 'poção de ataque'],
+    'inventário': ['poção de vida', 
+                   'poção de energia', 
+                   'poção de defesa', 
+                   'poção de ataque'],
+}
+
+status = {
+    'vida': 50,
+    'energia': 3
 }
 
 inimigos = [
     {'nome': "Slime",
      'vida': 30, 
-     'ataque': 5, 
+     'ataque': 7, 
      'defesa': 0, 
      'drop': [
          'poção de vida', 
@@ -29,7 +37,7 @@ inimigos = [
 
     {'nome': "Goblin",
      'vida': 50,
-     'ataque': 10,
+     'ataque': 15,
      'defesa': 5,
      'drop': [
          'poção de vida', 
@@ -41,6 +49,53 @@ inimigos = [
          'poção de ataque',
          'poção de ataque',
          'nada']},
+
+    {'nome': "Orc",
+     'vida': 80,
+     'ataque': 25,
+     'defesa': 10,
+     'drop': [
+         'poção de vida',
+         'poção de vida',
+         'poção de vida',
+         'poção de energia',
+         'poção de energia',
+         'poção de ataque',
+         'poção de ataque',
+         'poção de defesa',
+         'poção de defesa',
+         'nada',
+         'nada']},
+
+    {'nome': "Dragão",
+     'vida': 150,
+     'ataque': 40,
+     'defesa': 20,
+     'drop': [
+         'poção de vida',
+         'poção de vida',
+         'poção de vida',
+         'poção de energia',
+         'poção de energia',
+         'poção de ataque',
+         'poção de ataque',
+         'poção de defesa',
+         'poção de defesa']},
+
+    {'nome': "😨Deus😨 (Desista, nem tente...)",
+     'vida': 300,
+     'ataque': 60,
+     'defesa': 30,
+     'drop': [
+         'poção de vida',
+         'poção de vida',
+         'poção de vida',
+         'poção de energia',
+         'poção de energia',
+         'poção de ataque',
+         'poção de ataque',
+         'poção de defesa',
+         'poção de defesa']},
 ]
 
 inimigo = inimigos[fase]
@@ -50,7 +105,7 @@ def mostrar_status(jogador):
     time.sleep(1)
 
 def mostrar_batalha(jogador, inimigo):
-    print(f'==========BATALHA========== \n Jogador: \nNome: {jogador["nome"]} \nVida: {jogador["vida"]} \nDefesa: {jogador["defesa"]} \nEnergia: {jogador["energia"]} \n---------------\n Inimigo: \nNome: {inimigo["nome"]} \nVida: {inimigo["vida"]} \nDefesa: {inimigo['defesa']} \n==================')
+    print(f'==========BATALHA========== \n Jogador: \nNome: {jogador["nome"]} \nVida: {jogador["vida"]} \nAtaque: {jogador["ataque"]} \nDefesa: {jogador["defesa"]} \nEnergia: {jogador["energia"]} \n---------------\n Inimigo: \nNome: {inimigo["nome"]} \nVida: {inimigo["vida"]} \nDefesa: {inimigo['defesa']} \n==================')
 
 def mostrar_inimigo(inimigo):
     print(f'Você encontrou um {inimigo["nome"]}!')
@@ -59,7 +114,7 @@ def mostrar_inimigo(inimigo):
 def escolher_acao():
     acao = input('O que você deseja fazer? \n1 - Atacar \n2 - Usar item \n3 - Descansar \n4 - Fugir \nDigite aqui: ').lower()
     while acao not in ['1', '2', '3', '4', 'atacar', 'usar item', 'descansar', 'fugir']:
-        acao = input('Opção inválida! O que você deseja fazer? \n1 - Atacar \n2 - Usar item \n3 - Descansar \n4 - Fugir \nDigite aqui: ').lower()
+        acao = input('Opção inválida! \nO que você deseja fazer? \n1 - Atacar \n2 - Usar item \n3 - Descansar \n4 - Fugir \nDigite aqui: ').lower()
     return acao
 
 def verificar_vida(jogador, inimigo):
@@ -80,6 +135,8 @@ def calcular_dano(jogador, inimigo):
     if dano_jogador <= 0:
         dano_jogador = jogador['ataque'] // 2
     return dano_inimigo, dano_jogador
+
+dano_inimigo, dano_jogador = calcular_dano(jogador, inimigo)
 
 def atacar(jogador, inimigo, dano_jogador):
     print('Você descide atacar!')
@@ -129,9 +186,6 @@ def usar_item(jogador):
             time.sleep(1)
             print('Mas acabou se distraindo...')
             time.sleep(1)
-        if item_usado not in ['voltar', 'cancelar', 'sair']:
-            jogador['inventário'].remove(item_usado)     
-            print(f'Você usou a {item_usado}!') 
     else: 
         print('Você não tem nenhum item para usar!')
     time.sleep(1)
@@ -146,17 +200,19 @@ def descansar(jogador, dano_inimigo):
     print(f'Você recuperou 2 de energia! Energia atual: {jogador["energia"]}')
     time.sleep(1)
 
-def fugir_batalha(jogador, dano_inimigo):
+penalidade = dano_inimigo * 2
+
+def fugir_batalha(jogador, penalidade):
     print(f'Você descidiu fugir...? \nQue covarde... 🙄')
     time.sleep(1)
-    jogador['vida'] -= dano_inimigo * 2
-    jogador['ataque'] -= dano_inimigo * 2
-    jogador['defesa'] -= dano_inimigo * 2
+    jogador['vida'] = jogador['vida'] - penalidade
+    jogador['ataque'] = jogador['ataque'] - penalidade
+    jogador['defesa'] = jogador['defesa'] - penalidade
     if jogador['energia'] > 1:
         jogador['energia'] -= 2
     print('Todos os seus status foram reduzidos, não fuja da próxima! >:(')
     time.sleep(2)
-    return False
+    
 
 def verificar_energia(jogador):
     if jogador['energia'] <= 0:
@@ -174,19 +230,19 @@ def escolher_drop(jogador,inimigo):
         print('O inimigo não deixou nada para você.')
     time.sleep(1)
 
-def batalhar(jogador, inimigo):
+def batalhar(jogador, inimigo, dano_jogador, dano_inimigo):
     while verificar_vida(jogador, inimigo):
-        dano_inimigo, dano_jogador = calcular_dano(jogador, inimigo)
+        calcular_dano(jogador, inimigo)
         mostrar_batalha(jogador, inimigo)
         time.sleep(1)
         acao = escolher_acao()
-        if acao == '1':
+        if acao == '1' or acao == 'atacar':
                 energia = verificar_energia(jogador)
                 if energia:
                     atacar(jogador, inimigo, dano_jogador)
-        elif acao == '2':
+        elif acao == '2' or acao == 'usar item':
             usar_item(jogador)
-        elif acao == '3':
+        elif acao == '3' or acao == 'descansar':
             descansar(jogador, dano_inimigo)
         else:
             fugir_batalha(jogador, dano_inimigo)
@@ -210,13 +266,26 @@ while fase < len(inimigos):
     time.sleep(2)
     mostrar_inimigo(inimigo)
     time.sleep(1)
-    venceu = batalhar(jogador, inimigo)
+    venceu = batalhar(jogador, inimigo, dano_jogador, dano_inimigo)
     if venceu:
-        escolher_drop(jogador, inimigo)
-        fase += 1
+        if fase >= 2:
+            escolher_drop(jogador, inimigo)
+            escolher_drop(jogador, inimigo)
+        else:
+            escolher_drop(jogador, inimigo)
         if fase < len(inimigos):
-            print(f'Você avançou para a próxima fase! Prepare-se para enfrentar o próximo inimigo!')
+            print(f'Você consegue eliminar o {inimigo["nome"]} que está a sua frente!')
             time.sleep(2)
+            jogador['energia'] = status['energia'] + 2
+            jogador['vida'] = status['vida'] + 15
+            jogador['ataque'] += penalidade
+            jogador['defesa'] += penalidade
+            print('Você recebeu um buff!')
+            time.sleep(1)
+            mostrar_status(jogador)
+            time.sleep(2)
+            print(f'Você continua sua jornada e encontra outro inimigo! \nPrepare-se para a próxima batalha!')
+            fase += 1
         else:
             print('Parabéns! Você derrotou todos os inimigos e completou o jogo!')
     else:
