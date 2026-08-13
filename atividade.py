@@ -9,12 +9,12 @@ fase = 0
 jogador = {
     'nome': input('Digite o seu nome jogador(a)!: ').lower(),
     'vida': 50,
-    'ataque': 10,
-    'defesa': 5,
+    'ataque': 15,
+    'defesa': 10,
     'energia': 3,
-    'inventário': ['poção de vida', 
-                   'poção de energia', 
-                   'poção de defesa', 
+    'inventário': ['poção de vida',
+                   'poção de energia',
+                   'poção de defesa',
                    'poção de ataque'],
 }
 
@@ -25,11 +25,11 @@ status = {
 
 inimigos = [
     {'nome': "Slime",
-     'vida': 30, 
-     'ataque': 7, 
-     'defesa': 0, 
+     'vida': 30,
+     'ataque': 7,
+     'defesa': 0,
      'drop': [
-         'poção de vida', 
+         'poção de vida',
          'poção de vida',
          'poção de energia',
          'poção de energia',
@@ -37,10 +37,10 @@ inimigos = [
 
     {'nome': "Goblin",
      'vida': 50,
-     'ataque': 15,
-     'defesa': 5,
+     'ataque': 17,
+     'defesa': 7,
      'drop': [
-         'poção de vida', 
+         'poção de vida',
          'poção de vida',
          'poção de vida',
          'poção de vida',
@@ -52,7 +52,7 @@ inimigos = [
 
     {'nome': "Orc",
      'vida': 80,
-     'ataque': 25,
+     'ataque': 20,
      'defesa': 10,
      'drop': [
          'poção de vida',
@@ -68,7 +68,7 @@ inimigos = [
          'nada']},
 
     {'nome': "Dragão",
-     'vida': 150,
+     'vida': 140,
      'ataque': 40,
      'defesa': 20,
      'drop': [
@@ -105,7 +105,7 @@ def mostrar_status(jogador):
     time.sleep(1)
 
 def mostrar_batalha(jogador, inimigo):
-    print(f'==========BATALHA========== \n Jogador: \nNome: {jogador["nome"]} \nVida: {jogador["vida"]} \nAtaque: {jogador["ataque"]} \nDefesa: {jogador["defesa"]} \nEnergia: {jogador["energia"]} \n---------------\n Inimigo: \nNome: {inimigo["nome"]} \nVida: {inimigo["vida"]} \nDefesa: {inimigo['defesa']} \n==================')
+    print(f'==========BATALHA========== \n Jogador: \nNome: {jogador["nome"]} \nVida: {jogador["vida"]} \nAtaque: {jogador["ataque"]} \nDefesa: {jogador["defesa"]} \nEnergia: {jogador["energia"]} \n---------------\n Inimigo: \nNome: {inimigo["nome"]} \nVida: {inimigo["vida"]} \nAtaque: {inimigo['ataque']} \nDefesa: {inimigo['defesa']} \n==================')
 
 def mostrar_inimigo(inimigo):
     print(f'Você encontrou um {inimigo["nome"]}!')
@@ -130,13 +130,14 @@ def verificar_vida(jogador, inimigo):
 def calcular_dano(jogador, inimigo):
     dano_inimigo = inimigo['ataque'] - jogador['defesa']
     if dano_inimigo <= 0:
-        dano_inimigo = inimigo['ataque'] // 2
+        dano_inimigo = 1
     dano_jogador = jogador['ataque'] - inimigo['defesa']
     if dano_jogador <= 0:
-        dano_jogador = jogador['ataque'] // 2
+        dano_jogador = 1
     return dano_inimigo, dano_jogador
 
 dano_inimigo, dano_jogador = calcular_dano(jogador, inimigo)
+buff = (dano_inimigo * 2) - 5
 
 def atacar(jogador, inimigo, dano_jogador):
     print('Você descide atacar!')
@@ -155,28 +156,28 @@ def ataque_inimigo(jogador, inimigo, dano_inimigo):
 
 def usar_item(jogador):
     if jogador['inventário']:
-        for i in jogador['inventário']: 
-            print(f'Você possui o item: {i}') 
+        for i in jogador['inventário']:
+            print(f'Você possui o item: {i}')
         item_usado = input('Qual item você deseja usar? ').lower().strip()
-        while item_usado not in jogador['inventário'] and item_usado not in ['voltar', 'cancelar', 'sair']: 
+        while item_usado not in jogador['inventário'] and item_usado not in ['voltar', 'cancelar', 'sair']:
             print(f'Item {item_usado} não encontrado')
             item_usado = input('Qual item você deseja usar? ').lower().strip()
         if item_usado == 'poção de vida':
             print('Você usou uma poção de vida!')
             time.sleep(1)
             jogador['vida'] += 15
-            print(f'Sua vida agora está em {jogador["vida"]}') 
+            print(f'Sua vida agora está em {jogador["vida"]}')
         elif item_usado == 'poção de energia':
             print('Você usou uma poção de energia!')
             time.sleep(1)
             jogador['energia'] += 5
-            print(f'Sua energia agora está em {jogador["energia"]}') 
+            print(f'Sua energia agora está em {jogador["energia"]}')
         elif item_usado == 'poção de defesa':
             print('Você usou uma poção de defesa!')
-            time.sleep(1) 
+            time.sleep(1)
             jogador['defesa'] += 5
             print(f'Sua defesa agora está em {jogador["defesa"]}')
-        elif item_usado == 'poção de ataque': 
+        elif item_usado == 'poção de ataque':
             print('Você usou uma poção de ataque!')
             time.sleep(1)
             jogador['ataque'] += 5
@@ -186,8 +187,10 @@ def usar_item(jogador):
             time.sleep(1)
             print('Mas acabou se distraindo...')
             time.sleep(1)
-    else: 
+    else:
         print('Você não tem nenhum item para usar!')
+    if item_usado in jogador['inventário']:
+        jogador['inventário'].remove(item_usado)
     time.sleep(1)
 
 def descansar(jogador, dano_inimigo):
@@ -200,19 +203,17 @@ def descansar(jogador, dano_inimigo):
     print(f'Você recuperou 2 de energia! Energia atual: {jogador["energia"]}')
     time.sleep(1)
 
-penalidade = dano_inimigo * 2
-
-def fugir_batalha(jogador, penalidade):
-    print(f'Você descidiu fugir...? \nQue covarde... 🙄')
+def fugir_batalha(jogador, dano_inimigo):
+    penalidade = dano_inimigo * 2
+    print(f'Você decidiu fugir...? \nQue covarde... 🙄')
     time.sleep(1)
-    jogador['vida'] = jogador['vida'] - penalidade
-    jogador['ataque'] = jogador['ataque'] - penalidade
-    jogador['defesa'] = jogador['defesa'] - penalidade
+    jogador['vida'] -= penalidade
+    jogador['ataque'] -= penalidade
+    jogador['defesa'] -= penalidade
     if jogador['energia'] > 1:
         jogador['energia'] -= 2
     print('Todos os seus status foram reduzidos, não fuja da próxima! >:(')
     time.sleep(2)
-    
 
 def verificar_energia(jogador):
     if jogador['energia'] <= 0:
@@ -230,16 +231,16 @@ def escolher_drop(jogador,inimigo):
         print('O inimigo não deixou nada para você.')
     time.sleep(1)
 
-def batalhar(jogador, inimigo, dano_jogador, dano_inimigo):
+def batalhar(jogador, inimigo):
     while verificar_vida(jogador, inimigo):
-        calcular_dano(jogador, inimigo)
+        dano_inimigo, dano_jogador = calcular_dano(jogador, inimigo)
         mostrar_batalha(jogador, inimigo)
         time.sleep(1)
         acao = escolher_acao()
         if acao == '1' or acao == 'atacar':
-                energia = verificar_energia(jogador)
-                if energia:
-                    atacar(jogador, inimigo, dano_jogador)
+            energia = verificar_energia(jogador)
+            if energia:
+                atacar(jogador, inimigo, dano_jogador)
         elif acao == '2' or acao == 'usar item':
             usar_item(jogador)
         elif acao == '3' or acao == 'descansar':
@@ -266,26 +267,31 @@ while fase < len(inimigos):
     time.sleep(2)
     mostrar_inimigo(inimigo)
     time.sleep(1)
-    venceu = batalhar(jogador, inimigo, dano_jogador, dano_inimigo)
+    venceu = batalhar(jogador, inimigo)
     if venceu:
         if fase >= 2:
             escolher_drop(jogador, inimigo)
             escolher_drop(jogador, inimigo)
         else:
             escolher_drop(jogador, inimigo)
+        fase += 1
         if fase < len(inimigos):
             print(f'Você consegue eliminar o {inimigo["nome"]} que está a sua frente!')
             time.sleep(2)
-            jogador['energia'] = status['energia'] + 2
-            jogador['vida'] = status['vida'] + 15
-            jogador['ataque'] += penalidade
-            jogador['defesa'] += penalidade
+            jogador['energia'] = status['energia'] + jogador['energia']
+            if fase <= 1:
+              jogador['vida'] = status['vida'] + 15
+              jogador['ataque'] += buff
+              jogador['defesa'] += buff
+            else:
+              jogador['vida'] = status['vida'] + 30
+              jogador['ataque'] += buff + 10
+              jogador['defesa'] += buff + 10
             print('Você recebeu um buff!')
             time.sleep(1)
             mostrar_status(jogador)
             time.sleep(2)
             print(f'Você continua sua jornada e encontra outro inimigo! \nPrepare-se para a próxima batalha!')
-            fase += 1
         else:
             print('Parabéns! Você derrotou todos os inimigos e completou o jogo!')
     else:
